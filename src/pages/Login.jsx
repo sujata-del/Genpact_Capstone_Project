@@ -1,20 +1,42 @@
-
 import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!email || !password) {
-      alert('Please fill in both fields');
+      setError('Please fill in both fields');
       return;
     }
-    // Add your login logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
+
+    try {
+       await axios.post('http://localhost:8080/users/login', {
+        email,
+        password
+      });
+
+      // Handle success response, e.g., store token, redirect, etc.
+      setSuccess('Login successful!');
+      setError('');
+      navigate('/Categories'); // Redirect to the dashboard or another page after successful login
+
+    } catch (err) {
+      if (err.response && err.response.status === 401) {
+        setError('Invalid email or password.');
+      } else {
+        setError('Login failed. Please try again.');
+      }
+      setSuccess('');
+    }
   };
 
   return (
@@ -24,7 +46,8 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="email">
-              Email</label>
+              Email
+            </label>
             <input
               type="email"
               id="email"
@@ -37,7 +60,8 @@ const Login = () => {
           </div>
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="password">
-              Password</label>
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -53,39 +77,21 @@ const Login = () => {
                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? (
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                className="w-4 h-4 opacity-70"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-               
-               
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3l18 18M10 10c0-.8.4-1.5 1-2m2 2c.6.5 1 1.2 1 2 0 1.7-1.3 3-3 3-.8 0-1.5-.4-2-1M4.5 7.5C5.5 6.5 8.5 4.5 12 4.5c4.3 0 7.5 2.5 8.5 3.5m-3 3c-.8 1.3-2.4 3.5-5.5 3.5-2 0-4.3-1-5.5-3.5" />
-                </svg>
-                
-                )}
+                {showPassword ? 'Hide' : 'Show'}
               </button>
             </div>
           </div>
           <button
             type="submit"
-            className="w-full bg-indigo-600 text-white py-3 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full bg-green-700 text-white py-3 rounded-lg shadow-md hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             Log In
           </button>
+          {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+          {success && <p className="text-green-500 text-center mt-4">{success}</p>}
         </form>
         <p className="mt-4 text-center text-gray-600">
-          Don't have an account? <a href="/signup" className="text-indigo-600 hover:text-indigo-700 font-medium">Sign up</a>
+          Don't have an account? <a href="/signup" className="text-green-700 hover:text-green-800 font-medium">Sign up</a>
         </p>
       </div>
     </div>
