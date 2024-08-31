@@ -1,9 +1,12 @@
+
 // import React, { useEffect, useState } from 'react';
 // import axios from 'axios';
+// import { useNavigate } from 'react-router-dom';
 
 // const Categories = () => {
 //   const [categories, setCategories] = useState([]);
 //   const [newCategoryName, setNewCategoryName] = useState('');
+//   const navigate = useNavigate();
 
 //   useEffect(() => {
 //     fetchCategories();
@@ -25,7 +28,7 @@
 //       });
 
 //       console.log(response);
-
+      
 //       const newCategory = response.data;
 
 //       setCategories((prevCategories) => [...prevCategories, newCategory]);
@@ -60,17 +63,23 @@
 
 //   const handleDeleteCategory = async (categoryId) => {
 //     try {
-//       await axios.delete(`http://localhost:8080/api/categories/delete/${categoryId}`);
-
-//       setCategories((prevCategories) => prevCategories.filter((category) => category.categoryId !== categoryId));
+//       console.log(`Attempting to delete category with ID: ${categoryId}`);
+//       const response = await axios.delete(`http://localhost:8080/api/categories/delete/${categoryId}`);
+//       console.log('Delete response:', response);
+  
+//       if (response.status === 200) {
+//         setCategories((prevCategories) => prevCategories.filter((category) => category.categoryId !== categoryId));
+//       } else {
+//         console.error('Failed to delete category:', response.data);
+//       }
 //     } catch (error) {
 //       console.error('Error deleting category:', error);
 //     }
 //   };
+  
 
 //   const handleAddPlant = (categoryId) => {
-//     console.log(`Add plant to category ID: ${categoryId}`);
-//     // Add your logic to handle adding a plant here
+//     navigate(`/plant-details/${categoryId}`);
 //   };
 
 //   return (
@@ -136,11 +145,10 @@
 // };
 
 // export default Categories;
-
-// src/pages/Categories.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FaEdit, FaTrashAlt, FaLeaf } from 'react-icons/fa';
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -166,13 +174,9 @@ const Categories = () => {
         categoryName: newCategoryName,
       });
 
-      console.log(response);
-      
       const newCategory = response.data;
-
       setCategories((prevCategories) => [...prevCategories, newCategory]);
 
-      // Clear the input field
       setNewCategoryName('');
     } catch (error) {
       console.error('Error adding category:', error);
@@ -202,9 +206,13 @@ const Categories = () => {
 
   const handleDeleteCategory = async (categoryId) => {
     try {
-      await axios.delete(`http://localhost:8080/api/categories/delete/${categoryId}`);
+      const response = await axios.delete(`http://localhost:8080/api/categories/delete/${categoryId}`);
 
-      setCategories((prevCategories) => prevCategories.filter((category) => category.categoryId !== categoryId));
+      if (response.status === 200) {
+        setCategories((prevCategories) => prevCategories.filter((category) => category.categoryId !== categoryId));
+      } else {
+        console.error('Failed to delete category:', response.data);
+      }
     } catch (error) {
       console.error('Error deleting category:', error);
     }
@@ -215,28 +223,28 @@ const Categories = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-r from-green-200 to-green-100">
       <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-6">Category Management</h1>
+        <h1 className="text-4xl font-bold text-green-800 mb-6">Category Management</h1>
         <div className="flex mb-4">
           <input
             type="text"
-            className="flex-grow p-2 border rounded mr-2"
+            className="flex-grow p-2 border border-green-400 rounded-l"
             placeholder="New Category Name"
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
           />
           <button
-            className={`bg-green-500 text-white py-2 px-4 rounded ${newCategoryName ? '' : 'opacity-50 cursor-not-allowed'}`}
+            className={`bg-green-600 text-white py-2 px-4 rounded-r ${newCategoryName ? '' : 'opacity-50 cursor-not-allowed'}`}
             onClick={handleAddCategory}
             disabled={!newCategoryName}
           >
             Add Category
           </button>
         </div>
-        <table className="min-w-full bg-white border border-gray-300">
+        <table className="min-w-full bg-white shadow-md rounded-lg border border-gray-300">
           <thead>
-            <tr className="bg-gray-200">
+            <tr className="bg-green-300">
               <th className="py-2 px-4 border">Category ID</th>
               <th className="py-2 px-4 border">Category Name</th>
               <th className="py-2 px-4 border">Actions</th>
@@ -244,27 +252,27 @@ const Categories = () => {
           </thead>
           <tbody>
             {categories.map((category) => (
-              <tr key={category.categoryId} className="hover:bg-gray-100">
+              <tr key={category.categoryId} className="hover:bg-green-100">
                 <td className="py-2 px-4 border">{category.categoryId}</td>
                 <td className="py-2 px-4 border">{category.categoryName}</td>
                 <td className="py-2 px-4 border">
                   <button
-                    className="bg-blue-500 text-white py-1 px-3 rounded mr-2"
+                    className="bg-green-500 hover:bg-green-700 text-white py-1 px-3 rounded mr-2 shadow-lg"
                     onClick={() => handleUpdateCategory(category.categoryId)}
                   >
-                    Update
+                    <FaEdit />
                   </button>
                   <button
-                    className="bg-red-500 text-white py-1 px-3 rounded mr-2"
+                    className="bg-green-500 hover:bg-green-700 text-white py-1 px-3 rounded mr-2 shadow-lg"
                     onClick={() => handleDeleteCategory(category.categoryId)}
                   >
-                    Delete
+                    <FaTrashAlt />
                   </button>
                   <button
-                    className="bg-yellow-500 text-white py-1 px-3 rounded"
+                    className="bg-green-500 hover:bg-green-700 text-white py-1 px-3 rounded shadow-lg"
                     onClick={() => handleAddPlant(category.categoryId)}
                   >
-                    Add Plant
+                    <FaLeaf />
                   </button>
                 </td>
               </tr>

@@ -12,6 +12,8 @@ import Categories from './pages/Categories.jsx';
 import Contact from './pages/Contact.jsx';
 import About from './pages/About.jsx';
 import PlantDetails from './pages/PlantDetails';
+import ViewAllPlants from './pages/ViewAllPlants.jsx';
+import PlantPage from './pages/PlantPage.jsx';
 const App = () => {
   return (
     <Router>
@@ -23,6 +25,8 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/plant-details/:categoryId" element={<PlantDetails />} />
+        <Route path="/view-all-plants" element={<ViewAllPlants/>}/>
+        {/* <Route path="/plants" element={<PlantPage />} /> */}
         {/* <Route path="/dashboard" element={<Dashboard />}/> */}
         {/* <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
